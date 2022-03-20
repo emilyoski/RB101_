@@ -191,31 +191,23 @@ def display_score(scoreboard)
   prompt "Computer: #{scoreboard[1]}."
 end
 
+def game_flow(brd, current_plyr)
+  loop do
+    display_board(brd)
+    place_piece!(brd, current_plyr)
+    display_board(brd)
+    current_plyr = alternate_player(current_plyr)
+    break if someone_won?(brd) || board_full?(brd)
+  end
+end
+
 player_computer_score = [0, 0]
 
 loop do
   board = initialize_board
 
-  first_turn = decide_first_move
-  current_player = first_turn
-
-  if first_turn == 'player'
-    loop do
-      display_board(board)
-      place_piece!(board, current_player)
-      current_player = alternate_player(current_player)
-      break if someone_won?(board) || board_full?(board)
-    end
-  elsif first_turn == 'computer'
-    loop do
-      place_piece!(board, current_player)
-      display_board(board)
-      current_player = alternate_player(current_player)
-      break if someone_won?(board) || board_full?(board)
-    end
-  else
-    prompt "Okay so no one is playing this game!"
-  end
+  current_player = decide_first_move
+  game_flow(board, current_player)
 
   display_board(board)
   display_winner(detect_winner(board), board)
