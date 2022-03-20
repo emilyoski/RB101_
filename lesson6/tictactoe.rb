@@ -1,5 +1,3 @@
-require "pry"
-
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # cols
                 [[1, 5, 9], [3, 5, 7]]              # diagonals
@@ -167,31 +165,48 @@ def alternate_player(player)
   end
 end
 
+def display_winner(winner, brd)
+  if winner
+    prompt "#{detect_winner(brd)} won!"
+  else
+    prompt "It's a tie!"
+  end
+end
+
+def decide_first_move
+  prompt "Do you want to decide who goes? (yes or no)"
+  first_move_decide = gets.chomp.downcase
+
+  if first_move_decide.start_with?('n')
+    ['player', 'computer'].sample
+  else
+    prompt "Who should go first? Player or Computer?"
+    gets.chomp.downcase
+  end
+end
+
+def display_score(scoreboard)
+  prompt "Current Score is.....*drum roll*"
+  prompt "Player: #{scoreboard[0]}."
+  prompt "Computer: #{scoreboard[1]}."
+end
+
 player_computer_score = [0, 0]
 
 loop do
   board = initialize_board
 
-  prompt "Do you want to decide who goes? (yes or no)"
-  first_move_decide = gets.chomp.downcase
+  first_turn = decide_first_move
+  current_player = first_turn
 
-  if first_move_decide.start_with?('n')
-    first_move = ['player', 'computer'].sample
-  else
-    prompt "Who should go first? Player or Computer?"
-    first_move = gets.chomp.downcase
-  end
-
-  current_player = first_move
-
-  if first_move == 'player'
+  if first_turn == 'player'
     loop do
       display_board(board)
       place_piece!(board, current_player)
       current_player = alternate_player(current_player)
       break if someone_won?(board) || board_full?(board)
     end
-  elsif first_move == 'computer'
+  elsif first_turn == 'computer'
     loop do
       place_piece!(board, current_player)
       display_board(board)
@@ -203,19 +218,13 @@ loop do
   end
 
   display_board(board)
-
-  if someone_won?(board)
-    prompt "#{detect_winner(board)} won!"
-  else
-    prompt "It's a tie!"
-  end
+  display_winner(detect_winner(board), board)
 
   increment_score(board, player_computer_score)
+  display_score(player_computer_score)
 
   break if overall_winner(player_computer_score)
-  prompt "Current Score is.....*drum roll*"
-  prompt "Player: #{player_computer_score[0]}."
-  prompt "Computer: #{player_computer_score[1]}."
+
   prompt "Play again? (yes or no)"
   answer = gets.chomp
   break unless answer.downcase.start_with?('y')
