@@ -31,6 +31,7 @@ def list(hand)
 end
 
 def display_cards(ply_hand, deal_hand, display = 'hide')
+  clear_screen
   if display == 'hide'
     prompt "Dealer has:
             #{deal_hand[0][0]} of #{deal_hand[0][1]} and unknown card."
@@ -122,7 +123,6 @@ def player_turn(ply_hand, dlr_hand, deck)
 
     ply_total = calculate_score(ply_hand)
 
-    clear_screen
     display_cards(ply_hand, dlr_hand)
     break if answer.start_with?('s') || hand_busted?(ply_total)
   end
@@ -134,7 +134,6 @@ def dealer_turn(ply_hand, dlr_hand, deck)
     break if dealer_total > (WINNING_VALUE - 4) || hand_busted?(dealer_total)
     deal_card(dlr_hand, deck)
     sleep 1.5
-    clear_screen
     display_cards(ply_hand, dlr_hand, 'show')
   end
 end
@@ -214,7 +213,6 @@ end
 # ---------------------------------------------------
 
 def end_of_game(ply_hand, dlr_hand, ply_total, dlr_total, scores)
-  clear_screen
   display_cards(ply_hand, dlr_hand, 'show')
   display_winner(determine_winner(ply_total, dlr_total))
   increment_score(determine_winner(ply_total, dlr_total), scores)
@@ -263,7 +261,6 @@ loop do
   player_total = calculate_score(player_hand)
   dealer_total = calculate_score(dealer_hand)
 
-  clear_screen
   end_of_game(player_hand, dealer_hand, player_total,
               dealer_total, scoreboard)
   break if next_game?(scoreboard)
